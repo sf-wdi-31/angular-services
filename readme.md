@@ -287,3 +287,10 @@ function BookService($http, $q, $resource) {
   return resource;
 }
 ```
+
+### Closing Thoughts
+
+- Explain motivations for using services.
+- What are three steps you would take to create a custom service?
+- Why did we use promises in our custom book service?
+
