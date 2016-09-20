@@ -1,9 +1,34 @@
-# <img src="https://cloud.githubusercontent.com/assets/7833470/10899314/63829980-8188-11e5-8cdd-4ded5bcb6e36.png" height="60"> Angular Services
+<!--
+Creator: Team, most recent editing by Brianna
+Location: SF
+-->
 
-Services
+![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png)
+
+# Angular Services
+
+### Why is this important?
+<!-- framing the "why" in big-picture/real world examples -->
+*This workshop is important because:*
+
+Angular services  are used to organize and share code across an app. They're important for maintaining separation of concerns in an Angular app. "Services" in general are also a pattern across frameworks.
+
+Angular has many built-in services, but it's very common for developers to create their own.
+
+### What are the objectives?
+<!-- specific/measurable goal for students to achieve -->
+*After this workshop, developers will be able to:*
+
 - Explain motivations for using services.
 - Create a custom service.
 - Use promises in a custom service.
+
+### Where should we be now?
+<!-- call out the skills that are prerequisites -->
+*Before this workshop, developers should already be able to:*
+
+- Make `$http` calls to an external API from within a controller.
+- Update the view with data from the `$http` calls.
 
 
 ### Controllers Review
@@ -54,6 +79,84 @@ Controllers should not:
 
 This is a big change, but it's a best practice.
 
+### Service Code Structure
+
+1. To get started with a service, add it to your angular module. You can do this in `app.js` or  - better practice! - in a separate service file.
+
+  ```js
+  angular.module('storeApp')
+    .service('ReceiptService', ReceiptService);
+  ```
+
+1. The service should be a function that has its dependencies injected as usual. Methods that should be available outside the service should be added to the service object (`this`).
+
+  ```js
+  ReceiptService.$inject = [];
+  function ReceiptService() {
+    console.log('inside Receipt service');
+    var self = this;  // similar to vm = this
+    self.items = [];
+    self.queryAllItems = function(){
+      return self.items;
+    }
+    // ... functions to add and remove items... then other utility functions:
+    self.calculateTotal = function(){
+      return self.items.reduce(function(previousItem, currentItem){
+        return previousItem.price + currentItem.price;
+      });
+    };
+    self.discountItem = function(item, percentOff){
+      var discountMultiplier = (100-percentOff)/100;
+      item.price = item.price*discountMultiplier;
+    }
+  }
+  ```
+
+1. Now the service is ready to be used elsewhere! Here's how we'd make those functions and data available in a controller:
+
+  ```js
+  ReceiptController.$inject=['ReceiptService'];
+  function ReceiptController( ReceiptService) {
+    var vm = this;
+    vm.items = ReceiptService.queryAllItems();
+    vm.total = ReceiptService.calculateTotal();
+    // ...
+  }
+  ```
+
+**Note**: You might also see an alternative "factory" syntax for creating services. This syntax just sets up a "factory" function to create a service instance.
+
+<details><summary>click for factory syntax example</summary>
+```js
+angular.module('storeApp')
+  .factory('ReceiptService', ReceiptService);
+
+ReceiptService.$inject = [];
+function ReceiptService() {
+  var shinyNewServiceInstance = {};
+  // factory function body that constructs shinyNewServiceInstance
+  shinyNewServiceInstance.items = [];
+  shinyNewServiceInstance.queryAllItems = function(){
+    return self.items;
+  }
+  // ... and so on!
+  return shinyNewServiceInstance;
+});
+```
+
+The controller side looks the same:
+
+```js
+ReceiptController.$inject=['ReceiptService'];
+function ReceiptController( ReceiptService ) {
+  var vm = this;
+  vm.items = ReceiptService.queryAllItems();
+  vm.total = ReceiptService.calculateTotal();
+  // ...
+}
+```
+</details>
+
 ### Promises with Services
 
 Remember this promise structure?
@@ -82,14 +185,13 @@ function task(input){ // set up function to use with promises
 promise.then(successFunction, errorFunction);
 ```
 
-
 Our service will abstract the `$http` logic out of the controllers. To do this, the service will build up a set of promises. The controllers will only have to use these promises.
 
 ### Code Structure
 
 We already know how to write the code we need to implement a service that handles all of our RESTful routes.  The challenge is putting it together.  We'll set up the deferred objects and promises in the service and resolve each one after the appropriate `$http` call completes. Over in the controller, we'll use `.then` to say what should happen when each of the deferred tasks is done.
 
-We'll use 5 basic methods:
+We're not letting user create books, so we'll use 5 basic methods:
 
 * `query`  - gets all of a resource
 * `get`    - gets a specific resource (usually by id)
