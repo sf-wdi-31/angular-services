@@ -287,6 +287,7 @@ function BookService($http, $q, $resource) {
   return resource;
 }
 ```
+</details>
 
 ### Closing Thoughts
 
