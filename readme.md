@@ -79,7 +79,7 @@ Controllers should not:
 
 This is a big change, but it's a best practice.
 
-### Service Code Structure
+### Service Syntax
 
 1. To get started with a service, add it to your angular module. You can do this in `app.js` or  - better practice! - in a separate service file.
 
@@ -157,7 +157,7 @@ function ReceiptController( ReceiptService ) {
 ```
 </details>
 
-### Promises with Services
+### Refactor Plan: Promises & Service
 
 Remember this promise structure?
 
@@ -187,7 +187,7 @@ promise.then(successFunction, errorFunction);
 
 Our service will abstract the `$http` logic out of the controllers. To do this, the service will build up a set of promises. The controllers will only have to use these promises.
 
-### Code Structure
+
 
 We already know how to write the code we need to implement a service that handles all of our RESTful routes.  The challenge is putting it together.  We'll set up the deferred objects and promises in the service and resolve each one after the appropriate `$http` call completes. Over in the controller, we'll use `.then` to say what should happen when each of the deferred tasks is done.
 
